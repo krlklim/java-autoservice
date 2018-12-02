@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+import models.User;
+
 public class SignupController {
 
     @FXML
@@ -25,5 +27,18 @@ public class SignupController {
     @FXML
     private TextField signupName;
 
+    @FXML
+    void initialize() {
+        signupSubmit.setOnAction(event -> {
+            User user = new User(
+                signupName.getText(),
+                signupLastName.getText(),
+                signupMiddleName.getText(),
+                signupLogin.getText(),
+                signupPassword.getText()
+            );
+            user.signup();
+        });
+    }
 }
 
