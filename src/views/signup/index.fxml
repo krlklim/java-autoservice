@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SignupController">
+   <children>
+      <TextField fx:id="signupLogin" layoutX="192.0" layoutY="257.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите логин" />
+      <PasswordField fx:id="signupPassword" layoutX="192.0" layoutY="302.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите пароль" />
+      <TextField fx:id="signupName" layoutX="193.0" layoutY="140.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите имя" />
+      <TextField fx:id="signupLastName" layoutX="192.0" layoutY="183.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите фамилию" />
+      <TextField fx:id="signupMiddleName" layoutX="197.0" layoutY="221.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите отчество" />
+      <Button fx:id="signupSubmit" layoutX="261.0" layoutY="390.0" mnemonicParsing="false" prefHeight="30.0" text="Зарегистрироваться" />
+      <Label layoutX="122.0" layoutY="146.0" text="Имя" />
+      <Label layoutX="121.0" layoutY="181.0" text="Фамилия" />
+      <Label layoutX="112.0" layoutY="228.0" text="Отчество" />
+      <Label layoutX="118.0" layoutY="264.0" text="Логин" />
+      <Label layoutX="129.0" layoutY="308.0" text="Пароль" />
+   </children>
+</AnchorPane>
