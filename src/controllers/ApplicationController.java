@@ -13,7 +13,6 @@ import config.Routes;
 
 class ApplicationController {
     private void switchWindow(Window currentWindow, String newWindowLocation) {
-//        currentWindow.hide();
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(fetchRoute(newWindowLocation)));
 
@@ -24,9 +23,8 @@ class ApplicationController {
         }
 
         Parent root = loader.getRoot();
-        Stage stage = new Stage();
+        Stage stage = (Stage)currentWindow;
         stage.setScene(new Scene(root));
-        stage.showAndWait();
     }
 
     void navigateFromButton(Button button, String newPath) {

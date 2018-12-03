@@ -33,7 +33,7 @@ public class SignupController extends ApplicationController {
 
     private void setupEvents() {
         signupSubmit.setOnAction(event -> {
-//            signupUser();
+            signupUser();
             navigateFromButton(signupSubmit, "LOGIN_PATH");
         });
     }
