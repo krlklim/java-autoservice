@@ -1,9 +1,10 @@
 package models;
 
-import database.Handler;
+import config.Database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public abstract class ApplicationModel {
 
     ApplicationModel() {
         try {
-            this.connection = Handler.getConnection();
+            this.connection = Database.getConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -23,23 +24,48 @@ public abstract class ApplicationModel {
 
     protected abstract String getTable();
 
-    void insertQuery(List columns, List values) {
-        String insertStatement =
-                "INSERT INTO " + getTable() + " " +
-                "(" + String.join(",", columns) + ")" +
-                valuesString(values.size());
-
+    void insertQuery(List<String> columns, List values) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(insertStatement);
-            for(int i = 0; i < values.size(); i++) {
-                preparedStatement.setString(i + 1, values.get(i).toString());
-            }
-            System.out.println(preparedStatement);
-            preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement = connection.prepareStatement(insertStatement(columns, values));
+            setStatementValues(preparedStatement, values).executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
+    }
 
+    ResultSet selectQuery(List<String> columns, List values) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(selectStatement(columns));
+            return setStatementValues(preparedStatement, values).executeQuery();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            return null;
+        }
+    }
+
+    private String selectStatement(List<String> columns) {
+        List<String> queryColumns = columns.stream().map(column -> column + " = ?").collect(Collectors.toList());
+        return "SELECT * FROM " + getTable() + " WHERE " + columnsString(queryColumns, " AND ");
+    }
+
+    private PreparedStatement setStatementValues(PreparedStatement statement, List values) {
+        try {
+            for(int i = 0; i < values.size(); i++) {
+                statement.setString(i + 1, values.get(i).toString());
+            }
+            return statement;
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            return statement;
+        }
+    }
+
+    private String insertStatement(List<String> columns, List values) {
+        return "INSERT INTO " + getTable() + " " + columnsString(columns, ",") + valuesString(values.size());
+    }
+
+    private String columnsString(List<String> columns, String delimiter) {
+        return "(" + String.join(delimiter, columns) + ")";
     }
 
     private String valuesString(int valuesLength) {

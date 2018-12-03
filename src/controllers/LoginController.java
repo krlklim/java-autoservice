@@ -1,21 +1,17 @@
 package controllers;
 
-import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
-public class LoginController {
-    private static final String SIGNUP_PATH = "/views/signup/index.fxml";
+import models.User;
 
+public class LoginController extends ApplicationController {
     @FXML
     private ResourceBundle resources;
 
@@ -36,32 +32,23 @@ public class LoginController {
 
     @FXML
     void initialize() {
-        setupButtonEvents();
+        setupEvents();
     }
 
-    private void setupButtonEvents() {
-        signupButton.setOnAction(event -> switchWindow(signupButton.getScene().getWindow(), SIGNUP_PATH));
+    private void setupEvents() {
+        signupButton.setOnAction(event -> navigateFromButton(signupButton, "SIGNUP_PATH"));
         loginButton.setOnAction(event -> loginUser(loginField.getText().trim(), passwordField.getText().trim()));
     }
 
-    private void switchWindow(Window currentWindow, String newWindowLocation) {
-        currentWindow.hide();
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource(newWindowLocation));
-
-        try {
-            loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void loginUser(String loginText, String passwordText) {
+        if(loginText.isEmpty() || passwordText.isEmpty()) {
+            return;
         }
 
-        Parent root = loader.getRoot();
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.showAndWait();
-    }
-
-    private void loginUser(String loginText, String passwordText) {
-        if(loginText.isEmpty() || passwordText.isEmpty()) { }
+        User user = new User();
+        user.setLogin(loginText);
+        user.setPassword(passwordText);
+        ResultSet results = user.login();
+        System.out.println("Success");
     }
 }

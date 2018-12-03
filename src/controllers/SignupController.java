@@ -7,8 +7,7 @@ import javafx.scene.control.TextField;
 
 import models.User;
 
-public class SignupController {
-
+public class SignupController extends ApplicationController {
     @FXML
     private TextField signupLastName;
 
@@ -29,16 +28,25 @@ public class SignupController {
 
     @FXML
     void initialize() {
+        setupEvents();
+    }
+
+    private void setupEvents() {
         signupSubmit.setOnAction(event -> {
-            User user = new User(
+//            signupUser();
+            navigateFromButton(signupSubmit, "LOGIN_PATH");
+        });
+    }
+
+    private void signupUser() {
+        User user = new User(
                 signupName.getText(),
                 signupLastName.getText(),
                 signupMiddleName.getText(),
                 signupLogin.getText(),
                 signupPassword.getText()
-            );
-            user.signup();
-        });
+        );
+        user.signup();
     }
 }
 
