@@ -1,17 +1,18 @@
 package models;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
 public class User extends ApplicationModel {
-    private static final String USERS_TABLE = "users";
-    public static final String USERS_ID = "id";
-    private static final String USERS_FIRST_NAME = "first_name";
-    private static final String USERS_LAST_NAME = "last_name";
-    private static final String USERS_MIDDLE_NAME = "middle_name";
-    private static final String USERS_LOGIN = "login";
-    private static final String USERS_PASSWORD = "password";
+    private static final String TABLE = "users";
+    public static final String ID = "id";
+    private static final String FIRST_NAME = "first_name";
+    private static final String LAST_NAME = "last_name";
+    private static final String MIDDLE_NAME = "middle_name";
+    private static final String LOGIN = "login";
+    private static final String PASSWORD = "password";
 
     public String getFirstName() {
         return firstName;
@@ -53,6 +54,15 @@ public class User extends ApplicationModel {
         this.password = password;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -72,21 +82,34 @@ public class User extends ApplicationModel {
         super();
     }
 
-    protected String getTable() {
-        return USERS_TABLE;
-    }
-
     public void signup() {
         List<String> columns = Arrays.asList(
-            USERS_FIRST_NAME, USERS_LAST_NAME, USERS_MIDDLE_NAME, USERS_LOGIN, USERS_PASSWORD
+            FIRST_NAME, LAST_NAME, MIDDLE_NAME, LOGIN, PASSWORD
         );
         List values = Arrays.asList(firstName, lastName, middleName, login, password);
-        insertQuery(columns, values);
+        insertQuery(TABLE, columns, values);
     }
 
-    public ResultSet login() {
-        List<String> columns = Arrays.asList(USERS_LOGIN, USERS_PASSWORD);
+    public static User login(String login, String password) {
+        List<String> columns = Arrays.asList(LOGIN, PASSWORD);
         List values = Arrays.asList(login, password);
-        return selectQuery(columns, values);
+        ResultSet result = selectQuery(TABLE, columns, values);
+
+        try {
+            if(result.first()) {
+                User user = new User();
+                user.setId(result.getInt(ID));
+                user.setLogin(login);
+                user.setPassword(password);
+                user.setFirstName(result.getString(FIRST_NAME));
+                user.setLastName(result.getString(LAST_NAME));
+                user.setMiddleName(result.getString(MIDDLE_NAME));
+                return user;
+            }
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

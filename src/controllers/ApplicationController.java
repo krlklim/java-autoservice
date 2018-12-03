@@ -10,8 +10,18 @@ import javafx.scene.control.Button;
 import java.io.IOException;
 
 import config.Routes;
+import models.User;
+import helpers.ApplicationContext;
 
 class ApplicationController {
+    void setCurrentUser(User user) {
+        ApplicationContext.getInstance().setCurrentUser(user);
+    }
+
+    User getCurrentUser() {
+        return ApplicationContext.getInstance().getCurrentUser();
+    }
+
     private void switchWindow(Window currentWindow, String newWindowLocation) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(fetchRoute(newWindowLocation)));

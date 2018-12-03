@@ -37,7 +37,13 @@ public class LoginController extends ApplicationController {
 
     private void setupEvents() {
         signupButton.setOnAction(event -> navigateFromButton(signupButton, "SIGNUP_PATH"));
-        loginButton.setOnAction(event -> loginUser(loginField.getText().trim(), passwordField.getText().trim()));
+        loginButton.setOnAction(event -> {
+            loginUser(loginField.getText().trim(), passwordField.getText().trim());
+            if (getCurrentUser() == null) {
+                return;
+            }
+            navigateFromButton(loginButton, "STORE_PATH");
+        });
     }
 
     private void loginUser(String loginText, String passwordText) {
@@ -45,10 +51,7 @@ public class LoginController extends ApplicationController {
             return;
         }
 
-        User user = new User();
-        user.setLogin(loginText);
-        user.setPassword(passwordText);
-        ResultSet results = user.login();
-        System.out.println("Success");
+        User user = User.login(loginText, passwordText);
+        setCurrentUser(user);
     }
 }
