@@ -11,15 +11,16 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="automobilesTable" layoutX="50.0" layoutY="14.0" prefHeight="383.0" prefWidth="662.0">
+                        <TableView fx:id="automobilesTable" layoutX="50.0" layoutY="14.0" prefHeight="477.0" prefWidth="584.0">
                           <columns>
                             <TableColumn fx:id="brandColumn" prefWidth="75.0" text=" МАРКА" />
                               <TableColumn fx:id="nameColumn" prefWidth="114.0" text="МОДЕЛЬ" />
                             <TableColumn fx:id="serialNumberColumn" prefWidth="178.0" text="СЕРИЙНЫЙ НОМЕР" />
-                              <TableColumn fx:id="productionYearColumn" prefWidth="107.0" text="ГОД" />
-                              <TableColumn fx:id="costColumn" prefWidth="185.0" text="СТОИМОСТЬ" />
+                              <TableColumn fx:id="productionYearColumn" prefWidth="59.0" text="ГОД" />
+                              <TableColumn fx:id="costColumn" prefWidth="156.0" text="СТОИМОСТЬ" />
                           </columns>
                         </TableView>
+                        <Button fx:id="deleteAutomobileButton" layoutX="657.0" layoutY="14.0" mnemonicParsing="false" text="Удалить" />
                      </children></AnchorPane>
             </content>
           </Tab>

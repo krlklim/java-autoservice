@@ -1,11 +1,35 @@
 package tableModels;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.Automobile;
 
-public class AutomobileTableModel {
+public class AutomobileTableItem {
+    private Automobile automobile;
+    private IntegerProperty id;
+    private StringProperty brand;
+    private StringProperty serialNumber;
+    private StringProperty productionYear;
+    private StringProperty cost;
+    private StringProperty name;
+
+    public AutomobileTableItem(Automobile automobile) {
+        this.automobile = automobile;
+
+        this.id = new SimpleIntegerProperty(automobile.getId());
+        this.brand = new SimpleStringProperty(automobile.getBrand());
+        this.name = new SimpleStringProperty(automobile.getName());
+        this.serialNumber = new SimpleStringProperty(automobile.getSerialNumber());
+        this.productionYear = new SimpleStringProperty(automobile.getProductionYear());
+        this.cost = new SimpleStringProperty(automobile.getCost().toString());
+    }
+
+    public void delete() {
+        this.automobile.delete();
+    }
+
     public String getBrand() {
         return brand.get();
     }
@@ -13,13 +37,6 @@ public class AutomobileTableModel {
     public StringProperty brandProperty() {
         return brand;
     }
-
-    private IntegerProperty id;
-    private StringProperty brand;
-    private StringProperty serialNumber;
-    private StringProperty productionYear;
-    private StringProperty cost;
-    private StringProperty name;
 
     public int getId() {
         return id.get();
@@ -59,13 +76,5 @@ public class AutomobileTableModel {
 
     public StringProperty nameProperty() {
         return name;
-    }
-
-    public AutomobileTableModel(Automobile automobile) {
-        this.brand = new SimpleStringProperty(automobile.getBrand());
-        this.name = new SimpleStringProperty(automobile.getName());
-        this.serialNumber = new SimpleStringProperty(automobile.getSerialNumber());
-        this.productionYear = new SimpleStringProperty(automobile.getProductionYear());
-        this.cost = new SimpleStringProperty(automobile.getCost().toString());
     }
 }

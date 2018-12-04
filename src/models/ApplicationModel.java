@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 import helpers.ApplicationContext;
 
 abstract class ApplicationModel {
-    static Connection fetchConnection() {
+    private static Connection fetchConnection() {
         return ApplicationContext.getInstance().getConnection();
     }
 
@@ -45,9 +46,29 @@ abstract class ApplicationModel {
         }
     }
 
+    static void deleteQuery(String table, List<String> columns, List values) {
+        try {
+            PreparedStatement preparedStatement = fetchConnection().prepareStatement(deleteStatement(table, columns));
+            setStatementValues(preparedStatement, values).executeUpdate();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
+
+    static void deleteById(String table, int id) {
+        deleteQuery(table, Arrays.asList("id"), Arrays.asList(id));
+    }
+
+    private static String deleteStatement(String table, List<String> columns) {
+        return "DELETE FROM " + table + " WHERE " + columnsString(queryColumns(columns), " AND ");
+    }
+
     private static String selectStatement(String table, List<String> columns) {
-        List<String> queryColumns = columns.stream().map(column -> column + " = ?").collect(Collectors.toList());
-        return "SELECT * FROM " + table + " WHERE " + columnsString(queryColumns, " AND ");
+        return "SELECT * FROM " + table + " WHERE " + columnsString(queryColumns(columns), " AND ");
+    }
+
+    private static List<String> queryColumns(List<String> columns) {
+        return columns.stream().map(column -> column + " = ?").collect(Collectors.toList());
     }
 
     private static PreparedStatement setStatementValues(PreparedStatement statement, List values) {

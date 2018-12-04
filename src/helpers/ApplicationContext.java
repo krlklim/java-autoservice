@@ -6,15 +6,9 @@ import models.User;
 import java.sql.Connection;
 
 public class ApplicationContext {
-    private final static ApplicationContext instance = new ApplicationContext();
+    private User currentUser = null;
 
-    private ApplicationContext() {
-        try {
-            this.connection = Database.getConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    private final static ApplicationContext instance = new ApplicationContext();
 
     public static ApplicationContext getInstance() {
         return instance;
@@ -29,9 +23,11 @@ public class ApplicationContext {
     }
 
     public Connection getConnection() {
-        return connection;
+        try {
+            return Database.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-
-    public Connection connection;
-    private User currentUser = null;
 }

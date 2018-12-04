@@ -4,11 +4,12 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Automobile extends ApplicationModel {
     private static final String TABLE = "automobiles";
-    public static final String ID = "id";
+    private static final String ID = "id";
     private static final String BRAND = "brand";
     private static final String SERIAL_NUMBER = "serial_number";
     private static final String PRODUCTION_YEAR = "production_year";
@@ -70,7 +71,7 @@ public class Automobile extends ApplicationModel {
         this.id = id;
     }
 
-    public static List<Automobile> getAllAutomobiles() {
+    public static List<Automobile> selectAll() {
         ResultSet result = selectAllQuery(TABLE);
         List<Automobile> automobiles = new ArrayList<>();
         try {
@@ -91,5 +92,9 @@ public class Automobile extends ApplicationModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void delete() {
+        deleteById(TABLE, this.id);
     }
 }
