@@ -23,6 +23,15 @@ public class Automobile extends ApplicationModel {
     private BigDecimal cost;
     private String name;
 
+    public Automobile() {}
+    public Automobile(String brand, String name, String serialNumber, String productionYear, BigDecimal cost) {
+        this.brand = brand;
+        this.serialNumber = serialNumber;
+        this.productionYear = productionYear;
+        this.cost = cost;
+        this.name = name;
+    }
+
     public String getBrand() {
         return brand;
     }
@@ -92,6 +101,18 @@ public class Automobile extends ApplicationModel {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void create() {
+        List<String> columns = Arrays.asList(BRAND, NAME, SERIAL_NUMBER, PRODUCTION_YEAR, COST);
+        List values = Arrays.asList(brand, name, serialNumber, productionYear, cost);
+        insertQuery(TABLE, columns, values);
+    }
+
+    public void update() {
+        List<String> columns = Arrays.asList(BRAND, NAME, SERIAL_NUMBER, PRODUCTION_YEAR, COST);
+        List values = Arrays.asList(brand, name, serialNumber, productionYear, cost);
+        updateQuery(TABLE, id, columns, values);
     }
 
     public void delete() {

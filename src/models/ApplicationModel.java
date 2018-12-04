@@ -20,7 +20,7 @@ abstract class ApplicationModel {
 
     static void insertQuery(String table, List<String> columns, List values) {
         try {
-            PreparedStatement preparedStatement = fetchConnection().prepareStatement(insertStatement(table, columns, values));
+            PreparedStatement preparedStatement = fetchConnection().prepareStatement(insertStatement(table, columns));
             setStatementValues(preparedStatement, values).executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
@@ -59,12 +59,27 @@ abstract class ApplicationModel {
         deleteQuery(table, Arrays.asList("id"), Arrays.asList(id));
     }
 
+    static void updateQuery(String table, int id, List<String> columns, List values) {
+        try {
+            PreparedStatement preparedStatement = fetchConnection().prepareStatement(updateStatement(table, id, columns));
+            PreparedStatement st = setStatementValues(preparedStatement, values);
+            System.out.println(st);
+            setStatementValues(preparedStatement, values).executeUpdate();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
+
     private static String deleteStatement(String table, List<String> columns) {
         return "DELETE FROM " + table + " WHERE " + columnsString(queryColumns(columns), " AND ");
     }
 
     private static String selectStatement(String table, List<String> columns) {
         return "SELECT * FROM " + table + " WHERE " + columnsString(queryColumns(columns), " AND ");
+    }
+
+    private static String updateStatement(String table, int id, List<String> columns) {
+        return "UPDATE " + table + " SET " + columnsForQuery(queryColumns(columns), ", ") + " WHERE id = " + id;
     }
 
     private static List<String> queryColumns(List<String> columns) {
@@ -83,12 +98,16 @@ abstract class ApplicationModel {
         }
     }
 
-    private static String insertStatement(String table, List<String> columns, List values) {
-        return "INSERT INTO " + table + " " + columnsString(columns, ",") + valuesString(values.size());
+    private static String insertStatement(String table, List<String> columns) {
+        return "INSERT INTO " + table + " " + columnsString(columns, ",") + valuesString(columns.size());
     }
 
     private static String columnsString(List<String> columns, String delimiter) {
-        return "(" + String.join(delimiter, columns) + ")";
+        return "(" + columnsForQuery(columns, delimiter) + ")";
+    }
+
+    private static String columnsForQuery(List<String> columns, String delimiter) {
+        return String.join(delimiter, columns);
     }
 
     private static String valuesString(int valuesLength) {

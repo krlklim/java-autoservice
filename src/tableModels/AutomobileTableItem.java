@@ -6,8 +6,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import models.Automobile;
 
+import java.math.BigDecimal;
+
 public class AutomobileTableItem {
-    private Automobile automobile;
     private IntegerProperty id;
     private StringProperty brand;
     private StringProperty serialNumber;
@@ -16,8 +17,6 @@ public class AutomobileTableItem {
     private StringProperty name;
 
     public AutomobileTableItem(Automobile automobile) {
-        this.automobile = automobile;
-
         this.id = new SimpleIntegerProperty(automobile.getId());
         this.brand = new SimpleStringProperty(automobile.getBrand());
         this.name = new SimpleStringProperty(automobile.getName());
@@ -27,7 +26,15 @@ public class AutomobileTableItem {
     }
 
     public void delete() {
-        this.automobile.delete();
+        Automobile automobile = new Automobile();
+        automobile.setId(getId());
+        automobile.delete();
+    }
+
+    public void update(String brand, String name, String serialNumber, String productionYear, BigDecimal cost) {
+        Automobile automobile = new Automobile(brand, name, serialNumber, productionYear, cost);
+        automobile.setId(getId());
+        automobile.update();
     }
 
     public String getBrand() {
