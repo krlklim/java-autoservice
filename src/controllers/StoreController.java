@@ -11,6 +11,7 @@ import models.Automobile;
 import tableModels.AutomobileTableItem;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,6 +68,14 @@ public class StoreController extends ApplicationController {
     @FXML
     private TextField serialNumberField;
 
+    private List<Button> controlButtons() {
+        ArrayList<Button> buttons = new ArrayList<>();
+        buttons.add(newAutomobileButton);
+        buttons.add(editAutomobileButton);
+        buttons.add(deleteAutomobileButton);
+        return buttons;
+    }
+
     private String formAction;
 
     private static final String CREATE_BUTTON_TEXT = "Создать";
@@ -107,6 +116,8 @@ public class StoreController extends ApplicationController {
     }
 
     private void triggerForm(boolean visible) {
+        triggerControlButtons(!visible);
+        automobilesTable.setDisable(visible);
         automobileForm.setVisible(visible);
     }
 
@@ -140,6 +151,15 @@ public class StoreController extends ApplicationController {
         editAutomobileButton.setOnAction(event -> loadForm(UPDATE_ACTION, UPDATE_BUTTON_TEXT));
         closeAutomobileFormButton.setOnAction(event -> hideForm());
         saveAutomobileButton.setOnAction(event -> saveAutomobile());
+        automobilesTable.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> triggerControlButtons(!(newValue == null))
+        );
+    }
+
+    private void triggerControlButtons(boolean enabled) {
+        for(Button button: controlButtons()) {
+            button.setDisable(!enabled);
+        }
     }
 
     private void saveAutomobile() {
@@ -154,6 +174,7 @@ public class StoreController extends ApplicationController {
                 break;
         }
         resetAutomobiles();
+        triggerForm(false);
     }
 
     private void createAutomobile() {
@@ -185,6 +206,7 @@ public class StoreController extends ApplicationController {
         this.formAction = formAction;
         saveAutomobileButton.setText(sumbitButtonText);
         prepareFormFields();
+        automobilesTable.setDisable(true);
         showForm();
     }
 
