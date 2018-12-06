@@ -2,12 +2,10 @@ package controllers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import models.Automobile;
+import models.Order;
 import tableModels.AutomobileTableItem;
 
 import java.math.BigDecimal;
@@ -68,13 +66,39 @@ public class StoreController extends ApplicationController {
     @FXML
     private TextField serialNumberField;
 
-    private List<Button> controlButtons() {
-        ArrayList<Button> buttons = new ArrayList<>();
-        buttons.add(newAutomobileButton);
-        buttons.add(editAutomobileButton);
-        buttons.add(deleteAutomobileButton);
-        return buttons;
-    }
+    @FXML
+    private Pane adminControlPane;
+
+    @FXML
+    private TabPane storeTabPane;
+
+    @FXML
+    private Tab automobilesTab;
+
+    @FXML
+    private Tab ordersTab;
+
+    @FXML Button orderButton;
+
+    @FXML
+    private Label orderHeader;
+
+    @FXML
+    private Pane orderForm;
+
+    @FXML
+    private TextField paymentField;
+
+    @FXML
+    private TextField phoneField;
+
+    @FXML
+    private TextField addressField;
+
+    @FXML
+    private Button confirmOrderButton;
+
+    @FXML Button cancelOrderSaveButton;
 
     private String formAction;
 
@@ -89,9 +113,64 @@ public class StoreController extends ApplicationController {
         setupEvents();
         resetAutomobiles();
         hideForm();
+        setupUserControls();
     }
 
-    private List<TextField> formFields() {
+    private void setupEvents() {
+        deleteAutomobileButton.setOnAction(event -> deleteSelectedAutomobile());
+        newAutomobileButton.setOnAction(event -> loadAutomobilesForm(CREATE_ACTION, CREATE_BUTTON_TEXT));
+        editAutomobileButton.setOnAction(event -> loadAutomobilesForm(UPDATE_ACTION, UPDATE_BUTTON_TEXT));
+        closeAutomobileFormButton.setOnAction(event -> hideForm());
+        saveAutomobileButton.setOnAction(event -> saveAutomobile());
+        automobilesTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> triggerControlButtons(!(newValue == null))
+        );
+        orderButton.setOnAction(event -> loadOrdersForm());
+        confirmOrderButton.setOnAction((event -> createOrder()));
+        cancelOrderSaveButton.setOnAction(event -> closeOrdersForm());
+    }
+
+    private void loadOrdersForm() {
+        automobilesTable.setDisable(true);
+        orderForm.setVisible(true);
+        orderHeader.setText(
+            getSelectedItem().getBrand() + " " +
+            getSelectedItem().getName() + " " +
+            getSelectedItem().getSerialNumber()
+        );
+    }
+
+    private void closeOrdersForm() {
+        orderForm.setVisible(false);
+        clearForm(orderFormFields());
+        automobilesTable.setDisable(false);
+    }
+
+    private void createOrder() {
+        orderFromForm().create();
+        closeOrdersForm();
+    }
+
+    private List<Button> controlButtons() {
+        ArrayList<Button> buttons = new ArrayList<>();
+        buttons.add(newAutomobileButton);
+        buttons.add(editAutomobileButton);
+        buttons.add(deleteAutomobileButton);
+        return buttons;
+    }
+
+    private void setupUserControls() {
+        if (loggedAsAdmin()) {
+            adminControlPane.setVisible(true);
+            orderButton.setVisible(false);
+        } else {
+            adminControlPane.setVisible(false);
+            orderButton.setVisible(true);
+            storeTabPane.getTabs().remove(ordersTab);
+        }
+    }
+
+    private List<TextField> automobileFormFields() {
         return Arrays.asList(
             brandField,
             nameField,
@@ -101,8 +180,16 @@ public class StoreController extends ApplicationController {
         );
     }
 
-    private void clearForm() {
-        for(TextField field: formFields()) {
+    private List<TextField> orderFormFields() {
+        return Arrays.asList(
+            paymentField,
+            phoneField,
+            addressField
+        );
+    }
+
+    private void clearForm(List<TextField> fields) {
+        for(TextField field: fields) {
             field.clear();
         }
     }
@@ -143,17 +230,6 @@ public class StoreController extends ApplicationController {
 
     private AutomobileTableItem getSelectedItem() {
         return automobilesTable.getSelectionModel().getSelectedItem();
-    }
-
-    private void setupEvents() {
-        deleteAutomobileButton.setOnAction(event -> deleteSelectedAutomobile());
-        newAutomobileButton.setOnAction(event -> loadForm(CREATE_ACTION, CREATE_BUTTON_TEXT));
-        editAutomobileButton.setOnAction(event -> loadForm(UPDATE_ACTION, UPDATE_BUTTON_TEXT));
-        closeAutomobileFormButton.setOnAction(event -> hideForm());
-        saveAutomobileButton.setOnAction(event -> saveAutomobile());
-        automobilesTable.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldValue, newValue) -> triggerControlButtons(!(newValue == null))
-        );
     }
 
     private void triggerControlButtons(boolean enabled) {
@@ -197,12 +273,23 @@ public class StoreController extends ApplicationController {
         );
     }
 
+    private Order orderFromForm() {
+        return new Order(
+            paymentField.getText(),
+            addressField.getText(),
+            phoneField.getText(),
+            false,
+            getSelectedItem().getId(),
+            getCurrentUser().getId()
+        );
+    }
+
     private void deleteSelectedAutomobile() {
         getSelectedItem().delete();
         resetAutomobiles();
     }
 
-    private void loadForm(String formAction, String sumbitButtonText) {
+    private void loadAutomobilesForm(String formAction, String sumbitButtonText) {
         this.formAction = formAction;
         saveAutomobileButton.setText(sumbitButtonText);
         prepareFormFields();
@@ -213,7 +300,7 @@ public class StoreController extends ApplicationController {
     private void prepareFormFields() {
         switch(this.formAction) {
             case CREATE_ACTION:
-                clearForm();
+                clearForm(automobileFormFields());
                 break;
             case UPDATE_ACTION:
                 populateFormFields();

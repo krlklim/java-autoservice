@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -10,11 +11,12 @@
       <TextField fx:id="signupName" layoutX="180.0" layoutY="100.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите имя" />
       <TextField fx:id="signupLastName" layoutX="180.0" layoutY="145.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите фамилию" />
       <TextField fx:id="signupMiddleName" layoutX="180.0" layoutY="184.0" prefHeight="30.0" prefWidth="300.0" promptText="Введите отчество" />
-      <Button fx:id="signupSubmit" layoutX="180.0" layoutY="321.0" mnemonicParsing="false" prefHeight="30.0" text="Зарегистрироваться" />
+      <Button fx:id="signupSubmit" layoutX="200.0" layoutY="322.0" mnemonicParsing="false" prefHeight="30.0" text="Зарегистрироваться" />
       <Label layoutX="101.0" layoutY="100.0" prefHeight="30.0" text="Имя" />
       <Label layoutX="71.0" layoutY="152.0" text="Фамилия" />
       <Label layoutX="70.0" layoutY="191.0" text="Отчество" />
       <Label layoutX="89.0" layoutY="237.0" text="Логин" />
       <Label layoutX="84.0" layoutY="281.0" text="Пароль" />
+      <Button fx:id="signupBack" layoutX="379.0" layoutY="323.0" mnemonicParsing="false" text="Назад" />
    </children>
 </AnchorPane>

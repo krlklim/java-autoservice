@@ -13,6 +13,10 @@ public class User extends ApplicationModel {
     private static final String MIDDLE_NAME = "middle_name";
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
+    private static final String ROLE = "role";
+
+    public static final String ADMIN_ROLE = "admin";
+    public static final String CUSTOMER_ROLE = "customer";
 
     public String getFirstName() {
         return firstName;
@@ -68,14 +72,24 @@ public class User extends ApplicationModel {
     private String middleName;
     private String login;
     private String password;
+    private String role;
 
-    public User(String firstName, String lastName, String middleName, String login, String password) {
+    public User(String firstName, String lastName, String middleName, String login, String password, String role) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
         this.login = login;
         this.password = password;
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public User() {
@@ -84,9 +98,9 @@ public class User extends ApplicationModel {
 
     public void signup() {
         List<String> columns = Arrays.asList(
-            FIRST_NAME, LAST_NAME, MIDDLE_NAME, LOGIN, PASSWORD
+            FIRST_NAME, LAST_NAME, MIDDLE_NAME, LOGIN, PASSWORD, ROLE
         );
-        List values = Arrays.asList(firstName, lastName, middleName, login, password);
+        List values = Arrays.asList(firstName, lastName, middleName, login, password, role);
         insertQuery(TABLE, columns, values);
     }
 
@@ -104,6 +118,7 @@ public class User extends ApplicationModel {
                 user.setFirstName(result.getString(FIRST_NAME));
                 user.setLastName(result.getString(LAST_NAME));
                 user.setMiddleName(result.getString(MIDDLE_NAME));
+                user.setRole(result.getString(ROLE));
                 return user;
             }
             return null;

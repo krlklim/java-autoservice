@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 
 import models.User;
 
+import java.util.ArrayList;
+
 public class SignupController extends ApplicationController {
     @FXML
     private TextField signupLastName;
@@ -24,6 +26,9 @@ public class SignupController extends ApplicationController {
     private Button signupSubmit;
 
     @FXML
+    private Button signupBack;
+
+    @FXML
     private TextField signupName;
 
     @FXML
@@ -35,16 +40,39 @@ public class SignupController extends ApplicationController {
         signupSubmit.setOnAction(event -> {
             signupUser();
             navigateFromButton(signupSubmit, "LOGIN_PATH");
+            clearFields();
         });
+
+        signupBack.setOnAction((event -> {
+            navigateFromButton(signupBack, "LOGIN_PATH");
+            clearFields();
+        }));
+    }
+
+    private ArrayList<TextField> formButtons() {
+        ArrayList<TextField> fields = new ArrayList<>();
+        fields.add(signupName);
+        fields.add(signupLastName);
+        fields.add(signupMiddleName);
+        fields.add(signupLogin);
+        fields.add(signupPassword);
+        return fields;
+    }
+
+    private void clearFields() {
+        for (TextField field : formButtons()) {
+            field.clear();
+        }
     }
 
     private void signupUser() {
         User user = new User(
-                signupName.getText(),
-                signupLastName.getText(),
-                signupMiddleName.getText(),
-                signupLogin.getText(),
-                signupPassword.getText()
+            signupName.getText(),
+            signupLastName.getText(),
+            signupMiddleName.getText(),
+            signupLogin.getText(),
+            signupPassword.getText(),
+            User.CUSTOMER_ROLE
         );
         user.signup();
     }

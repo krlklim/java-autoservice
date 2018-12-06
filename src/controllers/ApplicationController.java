@@ -22,6 +22,10 @@ class ApplicationController {
         return ApplicationContext.getInstance().getCurrentUser();
     }
 
+    boolean loggedAsAdmin() {
+        return getCurrentUser().getRole().equals(User.ADMIN_ROLE);
+    }
+
     private void switchWindow(Window currentWindow, String newWindowLocation) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource(fetchRoute(newWindowLocation)));
