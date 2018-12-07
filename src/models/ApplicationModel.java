@@ -1,7 +1,5 @@
 package models;
 
-import config.Database;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +14,22 @@ import helpers.ApplicationContext;
 abstract class ApplicationModel {
     private static Connection fetchConnection() {
         return ApplicationContext.getInstance().getConnection();
+    }
+
+    static ResultSet findQuery(String table, int id) {
+        try {
+            PreparedStatement preparedStatement = fetchConnection().prepareStatement(
+                selectLimitStatement(table, Arrays.asList("id"), 1)
+            );
+            return setStatementValues(preparedStatement, Arrays.asList(id)).executeQuery();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ResultSet findByQuery(String table, String column, String value) {
+        return selectQuery(table, Arrays.asList(column), Arrays.asList(value));
     }
 
     static void insertQuery(String table, List<String> columns, List values) {
@@ -76,6 +90,10 @@ abstract class ApplicationModel {
 
     private static String selectStatement(String table, List<String> columns) {
         return "SELECT * FROM " + table + " WHERE " + columnsString(queryColumns(columns), " AND ");
+    }
+
+    private static String selectLimitStatement(String table, List<String> columns, int limit) {
+        return selectStatement(table, columns) + " LIMIT " + limit;
     }
 
     private static String updateStatement(String table, int id, List<String> columns) {

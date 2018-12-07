@@ -18,6 +18,31 @@ public class User extends ApplicationModel {
     public static final String ADMIN_ROLE = "admin";
     public static final String CUSTOMER_ROLE = "customer";
 
+    private int id;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+    private String login;
+    private String password;
+    private String role;
+
+    public User() {
+        super();
+    }
+    public User(String firstName, String lastName, String middleName, String login, String password, String role) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleName = middleName;
+        this.login = login;
+        this.password = password;
+        this.role = role;
+    }
+
+    public boolean isAdmin() {
+        return this.role.equals(User.ADMIN_ROLE);
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -66,34 +91,12 @@ public class User extends ApplicationModel {
         this.id = id;
     }
 
-    private int id;
-    private String firstName;
-    private String lastName;
-    private String middleName;
-    private String login;
-    private String password;
-    private String role;
-
-    public User(String firstName, String lastName, String middleName, String login, String password, String role) {
-        super();
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
-        this.login = login;
-        this.password = password;
-        this.role = role;
-    }
-
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public User() {
-        super();
     }
 
     public void signup() {
@@ -111,17 +114,41 @@ public class User extends ApplicationModel {
 
         try {
             if(result.first()) {
-                User user = new User();
-                user.setId(result.getInt(ID));
+                User user = fromSqlResult(result);
                 user.setLogin(login);
-                user.setPassword(password);
-                user.setFirstName(result.getString(FIRST_NAME));
-                user.setLastName(result.getString(LAST_NAME));
-                user.setMiddleName(result.getString(MIDDLE_NAME));
-                user.setRole(result.getString(ROLE));
                 return user;
             }
             return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static User find(int id) {
+        ResultSet result = findQuery(TABLE, id);
+
+        try {
+            if (result.first()) {
+                return fromSqlResult(result);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static User fromSqlResult(ResultSet result) {
+        try {
+            User user = new User();
+            user.setId(result.getInt(ID));
+            user.setFirstName(result.getString(FIRST_NAME));
+            user.setLastName(result.getString(LAST_NAME));
+            user.setMiddleName(result.getString(MIDDLE_NAME));
+            user.setRole(result.getString(ROLE));
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

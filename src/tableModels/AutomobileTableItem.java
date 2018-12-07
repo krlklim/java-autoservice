@@ -25,6 +25,14 @@ public class AutomobileTableItem {
         this.cost = new SimpleStringProperty(automobile.getCost().toString());
     }
 
+    public Automobile getAutomobile() {
+        Automobile automobile = new Automobile(
+            getBrand(), getName(), getSerialNumber(), getProductionYear(), new BigDecimal(getCost())
+        );
+        automobile.setId(getId());
+        return automobile;
+    }
+
     public void delete() {
         Automobile automobile = new Automobile();
         automobile.setId(getId());

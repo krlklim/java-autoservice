@@ -85,18 +85,42 @@ public class Automobile extends ApplicationModel {
         List<Automobile> automobiles = new ArrayList<>();
         try {
             while(result.next()) {
-                Automobile automobile = new Automobile();
-
-                automobile.setId(result.getInt(ID));
-                automobile.setBrand(result.getString(BRAND));
-                automobile.setCost(result.getBigDecimal(COST));
-                automobile.setName(result.getString(NAME));
-                automobile.setProductionYear(result.getString(PRODUCTION_YEAR));
-                automobile.setSerialNumber(result.getString(SERIAL_NUMBER));
-
-                automobiles.add(automobile);
+                automobiles.add(fromSqlResult(result));
             }
             return automobiles;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Automobile fromSqlResult(ResultSet result) {
+        Automobile automobile = new Automobile();
+
+        try {
+            automobile.setId(result.getInt(ID));
+            automobile.setBrand(result.getString(BRAND));
+            automobile.setCost(result.getBigDecimal(COST));
+            automobile.setName(result.getString(NAME));
+            automobile.setProductionYear(result.getString(PRODUCTION_YEAR));
+            automobile.setSerialNumber(result.getString(SERIAL_NUMBER));
+
+            return automobile;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Automobile find(int id) {
+        ResultSet result = findQuery(TABLE, id);
+
+        try {
+            if(result.first()) {
+                return fromSqlResult(result);
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

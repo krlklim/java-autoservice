@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 import models.Automobile;
 import models.Order;
 import tableModels.AutomobileTableItem;
+import tableModels.OrderTableItem;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,6 +16,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StoreController extends ApplicationController {
+    private static final String CREATE_BUTTON_TEXT = "Создать";
+    private static final String UPDATE_BUTTON_TEXT = "Сохранить";
+    private static final String CREATE_ACTION = "create";
+    private static final String UPDATE_ACTION = "update";
+
+    private String formAction;
+
+    //  Tabs
+    @FXML
+    private TabPane storeTabPane;
+
+    @FXML
+    private Tab automobilesTab;
+
+    @FXML
+    private Tab ordersTab;
+
+//  Automobiles table
+    @FXML
+    private TableView<AutomobileTableItem> automobilesTable;
+
     @FXML
     private TableColumn<AutomobileTableItem, String> costColumn;
 
@@ -25,13 +47,14 @@ public class StoreController extends ApplicationController {
     private TableColumn<AutomobileTableItem, String> productionYearColumn;
 
     @FXML
-    private TableView<AutomobileTableItem> automobilesTable;
-
-    @FXML
     private TableColumn<AutomobileTableItem, String> serialNumberColumn;
 
     @FXML
     private TableColumn<AutomobileTableItem, String> brandColumn;
+
+//  Automobiles admin controls
+    @FXML
+    private Pane adminControlPane;
 
     @FXML
     private Button newAutomobileButton;
@@ -42,12 +65,11 @@ public class StoreController extends ApplicationController {
     @FXML
     private Button deleteAutomobileButton;
 
+//  Automobiles customer controls
     @FXML
-    private Button saveAutomobileButton;
+    Button orderButton;
 
-    @FXML
-    private Button closeAutomobileFormButton;
-
+//  Automobiles form
     @FXML
     private Pane automobileForm;
 
@@ -66,25 +88,45 @@ public class StoreController extends ApplicationController {
     @FXML
     private TextField serialNumberField;
 
-    @FXML
-    private Pane adminControlPane;
+//  Automobiles form controls
 
     @FXML
-    private TabPane storeTabPane;
+    private Button saveAutomobileButton;
 
     @FXML
-    private Tab automobilesTab;
+    private Button closeAutomobileFormButton;
+
+//  Orders table
+    @FXML
+    private TableView<OrderTableItem> ordersTable;
 
     @FXML
-    private Tab ordersTab;
+    private TableColumn<OrderTableItem, String> automobileColumn;
 
-    @FXML Button orderButton;
+    @FXML
+    private TableColumn<OrderTableItem, String> userColumn;
+
+    @FXML
+    private TableColumn<OrderTableItem, String> paymentColumn;
+
+    @FXML
+    private TableColumn<OrderTableItem, String> addressColumn;
+
+    @FXML
+    private TableColumn<OrderTableItem, String> phoneColumn;
+
+    @FXML
+    private TableColumn<OrderTableItem, String> orderCostColumn;
+
+    @FXML
+    private TableColumn<OrderTableItem, String> confirmedColumn;
+
+//  Orders form
+    @FXML
+    private Pane orderForm;
 
     @FXML
     private Label orderHeader;
-
-    @FXML
-    private Pane orderForm;
 
     @FXML
     private TextField paymentField;
@@ -95,26 +137,69 @@ public class StoreController extends ApplicationController {
     @FXML
     private TextField addressField;
 
+//  Orders admin controls
+    @FXML Button confirmOrderButton;
+
+//  Orders form controls
+
     @FXML
-    private Button confirmOrderButton;
+    private Button saveOrderButton;
 
-    @FXML Button cancelOrderSaveButton;
-
-    private String formAction;
-
-    private static final String CREATE_BUTTON_TEXT = "Создать";
-    private static final String UPDATE_BUTTON_TEXT = "Сохранить";
-    private static final String CREATE_ACTION = "create";
-    private static final String UPDATE_ACTION = "update";
+    @FXML
+    Button cancelOrderSaveButton;
 
     @FXML
     void initialize() {
         setupCellValueFactories();
         setupEvents();
         resetAutomobiles();
+        resetOrders();
         hideForm();
         setupUserControls();
     }
+
+//  Data binding
+
+    private void setupCellValueFactories() {
+        brandColumn.setCellValueFactory(cellData -> cellData.getValue().brandProperty());
+        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        serialNumberColumn.setCellValueFactory(cellData -> cellData.getValue().serialNumberProperty());
+        productionYearColumn.setCellValueFactory(cellData -> cellData.getValue().productionYearProperty());
+        costColumn.setCellValueFactory(cellData -> cellData.getValue().costProperty());
+
+        automobileColumn.setCellValueFactory(cellData -> cellData.getValue().automobileProperty());
+        orderCostColumn.setCellValueFactory(cellData -> cellData.getValue().costProperty());
+        userColumn.setCellValueFactory(cellData -> cellData.getValue().userProperty());
+        paymentColumn.setCellValueFactory(cellData -> cellData.getValue().paymentProperty());
+        addressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
+        phoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
+        confirmedColumn.setCellValueFactory(cellData -> cellData.getValue().confirmedProperty());
+    }
+
+    private void resetAutomobiles() {
+        setAutomobiles(Automobile.selectAll());
+    }
+
+    private void setAutomobiles(List<Automobile> automobiles) {
+        automobilesTable.setItems(
+            FXCollections.observableArrayList(
+                automobiles.stream().map(AutomobileTableItem::new).collect(Collectors.toList())
+            )
+        );
+    }
+
+    private void resetOrders() {
+        setOrders(Order.selectVisible());
+    }
+
+    private void setOrders(List<Order> orders) {
+       ordersTable.setItems(
+            FXCollections.observableArrayList(
+                orders.stream().map(OrderTableItem::new).collect(Collectors.toList())
+            )
+        );
+    }
+
 
     private void setupEvents() {
         deleteAutomobileButton.setOnAction(event -> deleteSelectedAutomobile());
@@ -122,21 +207,28 @@ public class StoreController extends ApplicationController {
         editAutomobileButton.setOnAction(event -> loadAutomobilesForm(UPDATE_ACTION, UPDATE_BUTTON_TEXT));
         closeAutomobileFormButton.setOnAction(event -> hideForm());
         saveAutomobileButton.setOnAction(event -> saveAutomobile());
-        automobilesTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> triggerControlButtons(!(newValue == null))
-        );
         orderButton.setOnAction(event -> loadOrdersForm());
-        confirmOrderButton.setOnAction((event -> createOrder()));
+        saveOrderButton.setOnAction((event -> createOrder()));
         cancelOrderSaveButton.setOnAction(event -> closeOrdersForm());
+
+        automobilesTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
+        );
+
+        ordersTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> triggerOrderControlButtons(!(newValue == null))
+        );
+
+        confirmOrderButton.setOnAction(event -> confirmOrder());
     }
 
     private void loadOrdersForm() {
         automobilesTable.setDisable(true);
         orderForm.setVisible(true);
         orderHeader.setText(
-            getSelectedItem().getBrand() + " " +
-            getSelectedItem().getName() + " " +
-            getSelectedItem().getSerialNumber()
+            getSelectedAutomobile().getBrand() + " " +
+            getSelectedAutomobile().getName() + " " +
+            getSelectedAutomobile().getSerialNumber()
         );
     }
 
@@ -151,7 +243,7 @@ public class StoreController extends ApplicationController {
         closeOrdersForm();
     }
 
-    private List<Button> controlButtons() {
+    private List<Button> automobileControlButtons() {
         ArrayList<Button> buttons = new ArrayList<>();
         buttons.add(newAutomobileButton);
         buttons.add(editAutomobileButton);
@@ -163,11 +255,15 @@ public class StoreController extends ApplicationController {
         if (loggedAsAdmin()) {
             adminControlPane.setVisible(true);
             orderButton.setVisible(false);
+            confirmOrderButton.setVisible(true);
         } else {
             adminControlPane.setVisible(false);
             orderButton.setVisible(true);
-            storeTabPane.getTabs().remove(ordersTab);
+            confirmOrderButton.setVisible(false);
+
         }
+
+        ordersTable.setDisable(false);
     }
 
     private List<TextField> automobileFormFields() {
@@ -203,39 +299,36 @@ public class StoreController extends ApplicationController {
     }
 
     private void triggerForm(boolean visible) {
-        triggerControlButtons(!visible);
+        triggerAutomobileControlButtons(!visible);
         automobilesTable.setDisable(visible);
         automobileForm.setVisible(visible);
     }
 
-    private void resetAutomobiles() {
-        setAutomobiles(Automobile.selectAll());
-    }
-
-    private void setAutomobiles(List<Automobile> automobiles) {
-        automobilesTable.setItems(
-            FXCollections.observableArrayList(
-                automobiles.stream().map(AutomobileTableItem::new).collect(Collectors.toList())
-            )
-        );
-    }
-
-    private void setupCellValueFactories() {
-        brandColumn.setCellValueFactory(cellData -> cellData.getValue().brandProperty());
-        nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        serialNumberColumn.setCellValueFactory(cellData -> cellData.getValue().serialNumberProperty());
-        productionYearColumn.setCellValueFactory(cellData -> cellData.getValue().productionYearProperty());
-        costColumn.setCellValueFactory(cellData -> cellData.getValue().costProperty());
-    }
-
-    private AutomobileTableItem getSelectedItem() {
+    private AutomobileTableItem getSelectedAutomobile() {
         return automobilesTable.getSelectionModel().getSelectedItem();
     }
 
-    private void triggerControlButtons(boolean enabled) {
-        for(Button button: controlButtons()) {
+    private OrderTableItem getSelectedOrder() {
+        return ordersTable.getSelectionModel().getSelectedItem();
+    }
+
+    private void confirmOrder() {
+        getSelectedOrder().confirm();
+        resetOrders();
+    }
+
+    private void triggerAutomobileControlButtons(boolean enabled) {
+        for(Button button: automobileControlButtons()) {
             button.setDisable(!enabled);
         }
+    }
+
+    private void triggerOrderControlButtons(Boolean enabled) {
+        if (getSelectedOrder().getConfirmed() == Order.CONFIRMED_STATUS) {
+            confirmOrderButton.setDisable(true);
+            return;
+        }
+        confirmOrderButton.setDisable(!enabled);
     }
 
     private void saveAutomobile() {
@@ -259,7 +352,7 @@ public class StoreController extends ApplicationController {
 
     private void updateAutomobile() {
         Automobile automobile = automobileFromForm();
-        automobile.setId(getSelectedItem().getId());
+        automobile.setId(getSelectedAutomobile().getId());
         automobile.update();
     }
 
@@ -279,13 +372,13 @@ public class StoreController extends ApplicationController {
             addressField.getText(),
             phoneField.getText(),
             false,
-            getSelectedItem().getId(),
-            getCurrentUser().getId()
+            getSelectedAutomobile().getAutomobile(),
+            getCurrentUser()
         );
     }
 
     private void deleteSelectedAutomobile() {
-        getSelectedItem().delete();
+        getSelectedAutomobile().delete();
         resetAutomobiles();
     }
 
@@ -311,7 +404,7 @@ public class StoreController extends ApplicationController {
     }
 
     private void populateFormFields() {
-        AutomobileTableItem automobile = getSelectedItem();
+        AutomobileTableItem automobile = getSelectedAutomobile();
 
         brandField.setText(automobile.getBrand());
         nameField.setText(automobile.getName());

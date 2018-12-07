@@ -4,25 +4,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.StoreController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.StoreController">
    <children>
-      <TabPane fx:id="storeTabPane" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="storeTabPane" prefHeight="768.0" prefWidth="1024.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab fx:id="automobilesTab" text="АВТОМОБИЛИ">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="automobilesTable" disable="true" layoutX="50.0" layoutY="14.0" prefHeight="450.0">
+                        <TableView fx:id="automobilesTable" layoutX="50.0" layoutY="14.0" prefHeight="512.0" prefWidth="512.0">
                           <columns>
                             <TableColumn fx:id="brandColumn" prefWidth="100.0" text=" МАРКА" />
-                              <TableColumn fx:id="nameColumn" prefWidth="100.0" text="МОДЕЛЬ" />
-                            <TableColumn fx:id="serialNumberColumn" prefWidth="100.0" text="НОМЕР" />
-                              <TableColumn fx:id="productionYearColumn" prefWidth="50.0" text="ГОД" />
-                              <TableColumn fx:id="costColumn" prefWidth="100.0" text="СТОИМОСТЬ" />
+                              <TableColumn fx:id="nameColumn" prefWidth="128.4510040283203" text="МОДЕЛЬ" />
+                            <TableColumn fx:id="serialNumberColumn" prefWidth="124.65414428710938" text="НОМЕР" />
+                              <TableColumn fx:id="productionYearColumn" prefWidth="58.345794677734375" text="ГОД" />
+                              <TableColumn fx:id="costColumn" prefWidth="97.46615600585938" text="СТОИМОСТЬ" />
                           </columns>
                         </TableView>
                         <Accordion layoutX="539.0" layoutY="14.0" />
-                        <Pane fx:id="automobileForm" layoutX="539.0" layoutY="14.0" prefHeight="373.0" prefWidth="228.0" visible="false">
+                        <Pane fx:id="automobileForm" layoutX="690.0" layoutY="24.0" prefHeight="373.0" prefWidth="228.0" visible="false">
                            <children>
                               <Label layoutX="23.0" layoutY="14.0" text="Марка" />
                               <TextField fx:id="brandField" layoutX="23.0" layoutY="31.0" />
@@ -38,7 +38,7 @@
                               <Button fx:id="closeAutomobileFormButton" layoutX="123.0" layoutY="316.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="69.0" text="Отмена" />
                            </children>
                         </Pane>
-                        <Pane fx:id="adminControlPane" layoutX="172.0" layoutY="464.0" prefHeight="65.0" prefWidth="330.0" visible="false">
+                        <Pane fx:id="adminControlPane" layoutX="179.0" layoutY="544.0" prefHeight="65.0" prefWidth="330.0">
                            <children>
                               <Button fx:id="deleteAutomobileButton" layoutX="247.0" layoutY="19.0" mnemonicParsing="false" text="Удалить" />
                               <Button fx:id="newAutomobileButton" layoutY="19.0" mnemonicParsing="false" text="Добавить" />
@@ -46,7 +46,7 @@
                            </children>
                         </Pane>
                         <Button fx:id="orderButton" layoutX="56.0" layoutY="483.0" mnemonicParsing="false" text="Заказать" visible="false" />
-                        <Pane fx:id="orderForm" layoutX="539.0" layoutY="24.0" prefHeight="392.0" prefWidth="239.0" visible="false">
+                        <Pane fx:id="orderForm" layoutX="686.0" layoutY="28.0" prefHeight="392.0" prefWidth="239.0" visible="false">
                            <children>
                               <Label layoutX="14.0" layoutY="14.0" prefHeight="13.0" prefWidth="119.0" text="Заказ автомобиля" />
                               <Label fx:id="orderHeader" layoutX="14.0" layoutY="41.0" prefHeight="17.0" prefWidth="197.0" />
@@ -56,7 +56,7 @@
                               <Label layoutX="14.0" layoutY="77.0" prefHeight="17.0" prefWidth="128.0" text="Реквизиты оплаты" />
                               <Label layoutX="14.0" layoutY="145.0" prefHeight="17.0" prefWidth="144.0" text="Контактный телефон" />
                               <Label layoutX="14.0" layoutY="210.0" prefHeight="17.0" prefWidth="144.0" text="Адрес" />
-                              <Button fx:id="confirmOrderButton" layoutX="14.0" layoutY="291.0" mnemonicParsing="false" text="Заказать" />
+                              <Button fx:id="saveOrderButton" layoutX="14.0" layoutY="291.0" mnemonicParsing="false" text="Заказать" />
                               <Button fx:id="cancelOrderSaveButton" layoutX="99.0" layoutY="291.0" mnemonicParsing="false" text="Отмена" />
                            </children>
                         </Pane>
@@ -67,17 +67,18 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="automobilesTable1" disable="true" layoutX="56.0" layoutY="14.0" prefHeight="450.0" prefWidth="686.0">
+                        <TableView fx:id="ordersTable" disable="true" layoutX="56.0" layoutY="14.0" prefHeight="450.0" prefWidth="686.0">
                            <columns>
                               <TableColumn fx:id="automobileColumn" prefWidth="101.0" text="АВТОМОБИЛЬ" />
                               <TableColumn fx:id="userColumn" prefWidth="117.0" text="ПОЛЬЗОВАТЕЛЬ" />
                               <TableColumn fx:id="paymentColumn" prefWidth="68.0" text="ОПЛАТА" />
                               <TableColumn fx:id="addressColumn" text="АДРЕС" />
                               <TableColumn fx:id="phoneColumn" prefWidth="81.0" text="ТЕЛЕФОН" />
-                              <TableColumn fx:id="costColumns" prefWidth="109.0" text="СТОИМОСТЬ" />
-                              <TableColumn fx:id="automobileColumn2" prefWidth="128.0" text="ПОДТВЕРЖДЕН" />
+                              <TableColumn fx:id="orderCostColumn" prefWidth="109.0" text="СТОИМОСТЬ" />
+                              <TableColumn fx:id="confirmedColumn" prefWidth="128.0" text="СТАТУС" />
                            </columns>
                         </TableView>
+                        <Button fx:id="confirmOrderButton" disable="true" layoutX="571.0" layoutY="509.0" mnemonicParsing="false" text="Подтвердить заказ" />
                      </children></AnchorPane>
             </content>
           </Tab>
