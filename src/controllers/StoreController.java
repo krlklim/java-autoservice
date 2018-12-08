@@ -2,7 +2,12 @@ package controllers;
 
 import helpers.ApplicationContext;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import models.Automobile;
@@ -174,6 +179,19 @@ public class StoreController extends ApplicationController {
     @FXML
     private Button deleteUserButton;
 
+//  Cars chart
+    @FXML
+    private Tab statsTab;
+
+    @FXML
+    private LineChart carsChart;
+
+    @FXML
+    private CategoryAxis carsChartXAxis;
+
+    @FXML
+    private NumberAxis carsChartYAxis;
+
     @FXML
     void initialize() {
         setupCellValueFactories();
@@ -183,6 +201,7 @@ public class StoreController extends ApplicationController {
         resetUsers();
         hideForm();
         setupUserControls();
+        setupCarsChart();
     }
 
 //  Data binding
@@ -210,6 +229,7 @@ public class StoreController extends ApplicationController {
 
     private void resetAutomobiles() {
         setAutomobiles(Automobile.selectAll());
+        resetChart();
     }
 
     private void setAutomobiles(List<Automobile> automobiles) {
@@ -481,5 +501,40 @@ public class StoreController extends ApplicationController {
         user.delete();
         resetUsers();
         resetOrders();
+    }
+
+    private void setupCarsChart() {
+        carsChart.setTitle("Статистика по автомобилям 2010-2018 годов");
+        carsChart.setAnimated(false);
+        carsChartXAxis.setLabel("Год производства");
+        carsChartYAxis.setLabel("Количество автомобилей");
+    }
+
+    private void setDataToCarsChart() {
+        XYChart.Series series = new LineChart.Series();
+        series.setName("Автомобили в салоне");
+
+        carsChartXAxis.setAutoRanging(true);
+
+        for (String year: Arrays.asList("2010", "2011", "2012", "2013")) {
+            series.getData().add(new XYChart.Data(year, carsManufacturedByYear(year)));
+        }
+
+        carsChart.getData().add(series);
+    }
+
+    private int carsManufacturedByYear(String year) {
+        List<AutomobileTableItem> items = automobilesTable.getItems();
+        return (int)items.stream().filter(item -> item.getProductionYear().equals(year)).count();
+    }
+
+    private void resetChart() {
+        clearChart();
+        setDataToCarsChart();
+    }
+
+    private void clearChart() {
+        carsChart.getData().clear();
+        setDataToCarsChart();
     }
 }

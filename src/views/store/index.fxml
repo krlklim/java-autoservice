@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -95,6 +96,22 @@
                           </columns>
                         </TableView>
                         <Button fx:id="deleteUserButton" layoutX="468.0" layoutY="565.0" mnemonicParsing="false" text="Удалить" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab fx:id="statsTab" text="СТАТИСТИКА">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <LineChart fx:id="carsChart" layoutX="128.0" layoutY="53.0" prefHeight="579.0" prefWidth="731.0">
+                          <xAxis>
+                            <CategoryAxis fx:id="carsChartXAxis" side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="carsChartYAxis" side="LEFT" />
+                          </yAxis>
+                        </LineChart>
                      </children>
                   </AnchorPane>
               </content>
