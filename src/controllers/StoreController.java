@@ -1,13 +1,16 @@
 package controllers;
 
+import helpers.ApplicationContext;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import models.Automobile;
 import models.Order;
+import models.User;
 import tableModels.AutomobileTableItem;
 import tableModels.OrderTableItem;
+import tableModels.UserTableItem;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,6 +35,9 @@ public class StoreController extends ApplicationController {
 
     @FXML
     private Tab ordersTab;
+
+    @FXML
+    private Tab usersTab;
 
 //  Automobiles table
     @FXML
@@ -148,12 +154,33 @@ public class StoreController extends ApplicationController {
     @FXML
     Button cancelOrderSaveButton;
 
+//  Users table
+    @FXML
+    private TableView<UserTableItem> usersTable;
+
+    @FXML
+    private TableColumn<UserTableItem, String> userLoginColumn;
+
+    @FXML
+    private TableColumn<UserTableItem, String> userFirstNameColumn;
+
+    @FXML
+    private TableColumn<UserTableItem, String> userLastNameColumn;
+
+    @FXML
+    private TableColumn<UserTableItem, String> userMiddleNameColumn;
+
+//  Users controls
+    @FXML
+    private Button deleteUserButton;
+
     @FXML
     void initialize() {
         setupCellValueFactories();
         setupEvents();
         resetAutomobiles();
         resetOrders();
+        resetUsers();
         hideForm();
         setupUserControls();
     }
@@ -174,6 +201,11 @@ public class StoreController extends ApplicationController {
         addressColumn.setCellValueFactory(cellData -> cellData.getValue().addressProperty());
         phoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
         confirmedColumn.setCellValueFactory(cellData -> cellData.getValue().confirmedProperty());
+
+        userLoginColumn.setCellValueFactory(cellData -> cellData.getValue().loginProperty());
+        userFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
+        userLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
+        userMiddleNameColumn.setCellValueFactory(cellData -> cellData.getValue().middleNameProperty());
     }
 
     private void resetAutomobiles() {
@@ -200,6 +232,18 @@ public class StoreController extends ApplicationController {
         );
     }
 
+    private void resetUsers() {
+        setUsers(User.selectAll());
+    }
+
+    private void setUsers(List<User> users) {
+        usersTable.setItems(
+                FXCollections.observableArrayList(
+                        users.stream().map(UserTableItem::new).collect(Collectors.toList())
+                )
+        );
+    }
+
 
     private void setupEvents() {
         deleteAutomobileButton.setOnAction(event -> deleteSelectedAutomobile());
@@ -210,6 +254,8 @@ public class StoreController extends ApplicationController {
         orderButton.setOnAction(event -> loadOrdersForm());
         saveOrderButton.setOnAction((event -> createOrder()));
         cancelOrderSaveButton.setOnAction(event -> closeOrdersForm());
+        confirmOrderButton.setOnAction(event -> confirmOrder());
+        deleteUserButton.setOnAction(event -> deleteUser());
 
         automobilesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
@@ -219,7 +265,10 @@ public class StoreController extends ApplicationController {
                 (observable, oldValue, newValue) -> triggerOrderControlButtons(!(newValue == null))
         );
 
-        confirmOrderButton.setOnAction(event -> confirmOrder());
+        usersTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> triggerUserDeleteButton(!(newValue == null))
+        );
+
     }
 
     private void loadOrdersForm() {
@@ -260,7 +309,7 @@ public class StoreController extends ApplicationController {
             adminControlPane.setVisible(false);
             orderButton.setVisible(true);
             confirmOrderButton.setVisible(false);
-
+            storeTabPane.getTabs().remove(usersTab);
         }
 
         ordersTable.setDisable(false);
@@ -312,6 +361,11 @@ public class StoreController extends ApplicationController {
         return ordersTable.getSelectionModel().getSelectedItem();
     }
 
+
+    private UserTableItem getSelectedUser() {
+        return usersTable.getSelectionModel().getSelectedItem();
+    }
+
     private void confirmOrder() {
         getSelectedOrder().confirm();
         resetOrders();
@@ -329,6 +383,14 @@ public class StoreController extends ApplicationController {
             return;
         }
         confirmOrderButton.setDisable(!enabled);
+    }
+
+    private void triggerUserDeleteButton(Boolean enabled) {
+        if (getSelectedUser().getId() == ApplicationContext.getInstance().getCurrentUser().getId()) {
+            deleteUserButton.setDisable(true);
+            return;
+        }
+        deleteUserButton.setDisable(!enabled);
     }
 
     private void saveAutomobile() {
@@ -411,5 +473,13 @@ public class StoreController extends ApplicationController {
         serialNumberField.setText(automobile.getSerialNumber());
         productionYearField.setText(automobile.getProductionYear());
         costField.setText(automobile.getCost());
+    }
+
+    private void deleteUser() {
+        User user = new User();
+        user.setId(getSelectedUser().getId());
+        user.delete();
+        resetUsers();
+        resetOrders();
     }
 }

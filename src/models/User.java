@@ -2,6 +2,7 @@ package models;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -125,6 +126,24 @@ public class User extends ApplicationModel {
         }
     }
 
+    public static List<User> selectAll() {
+        ResultSet result = selectAllQuery(TABLE);
+        List<User> users = new ArrayList<>();
+        try {
+            while(result.next()) {
+                users.add(fromSqlResult(result));
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void delete() {
+        deleteById(TABLE, this.id);
+    }
+
     public static User find(int id) {
         ResultSet result = findQuery(TABLE, id);
 
@@ -147,6 +166,7 @@ public class User extends ApplicationModel {
             user.setFirstName(result.getString(FIRST_NAME));
             user.setLastName(result.getString(LAST_NAME));
             user.setMiddleName(result.getString(MIDDLE_NAME));
+            user.setLogin(result.getString(LOGIN));
             user.setRole(result.getString(ROLE));
             return user;
         } catch (SQLException e) {

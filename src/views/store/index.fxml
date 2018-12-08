@@ -82,6 +82,23 @@
                      </children></AnchorPane>
             </content>
           </Tab>
+            <Tab fx:id="usersTab" text="ПОЛЬЗОВАТЕЛИ">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="usersTable" layoutX="110.0" layoutY="52.0" prefHeight="482.0" prefWidth="433.0">
+                          <columns>
+                              <TableColumn fx:id="userLoginColumn" prefWidth="84.96257019042969" text="ЛОГИН" />
+                            <TableColumn fx:id="userFirstNameColumn" prefWidth="123.03746032714844" text="ИМЯ" />
+                            <TableColumn fx:id="userLastNameColumn" prefWidth="108.79681396484375" text="ФАМИЛИЯ" />
+                              <TableColumn fx:id="userMiddleNameColumn" prefWidth="112.20321655273438" text="ОТЧЕСТВО" />
+                          </columns>
+                        </TableView>
+                        <Button fx:id="deleteUserButton" layoutX="468.0" layoutY="565.0" mnemonicParsing="false" text="Удалить" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>
