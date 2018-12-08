@@ -1,5 +1,7 @@
 package models;
 
+import config.Database;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +11,15 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
-import helpers.ApplicationContext;
 
 abstract class ApplicationModel {
     private static Connection fetchConnection() {
-        return ApplicationContext.getInstance().getConnection();
+        try {
+            return Database.getConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     static ResultSet findQuery(String table, int id) {
@@ -35,6 +41,7 @@ abstract class ApplicationModel {
     static void insertQuery(String table, List<String> columns, List values) {
         try {
             PreparedStatement preparedStatement = fetchConnection().prepareStatement(insertStatement(table, columns));
+            System.out.println(setStatementValues(preparedStatement, values));
             setStatementValues(preparedStatement, values).executeUpdate();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();

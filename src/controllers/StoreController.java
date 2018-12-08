@@ -1,6 +1,6 @@
 package controllers;
 
-import helpers.ApplicationContext;
+import client.CustomClientSocket;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -194,6 +194,10 @@ public class StoreController extends ApplicationController {
 
     @FXML
     void initialize() {
+        clientSocket = new CustomClientSocket();
+        Thread th = new Thread(clientSocket);
+        th.start();
+
         setupCellValueFactories();
         setupEvents();
         resetAutomobiles();
@@ -406,10 +410,11 @@ public class StoreController extends ApplicationController {
     }
 
     private void triggerUserDeleteButton(Boolean enabled) {
-        if (getSelectedUser().getId() == ApplicationContext.getInstance().getCurrentUser().getId()) {
-            deleteUserButton.setDisable(true);
-            return;
-        }
+//        TODO: use getcurrentuser endpoint
+//        if (getSelectedUser().getId() == ApplicationContext.getInstance().getCurrentUser().getId()) {
+//            deleteUserButton.setDisable(true);
+//            return;
+//        }
         deleteUserButton.setDisable(!enabled);
     }
 
@@ -449,13 +454,15 @@ public class StoreController extends ApplicationController {
     }
 
     private Order orderFromForm() {
+//        TODO: getcurrentuser
         return new Order(
             paymentField.getText(),
             addressField.getText(),
             phoneField.getText(),
             false,
             getSelectedAutomobile().getAutomobile(),
-            getCurrentUser()
+            null
+//            getCurrentUser()
         );
     }
 

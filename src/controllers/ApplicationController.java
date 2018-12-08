@@ -1,5 +1,7 @@
 package controllers;
 
+import client.CustomClientMessage;
+import client.CustomClientSocket;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,22 +10,20 @@ import javafx.stage.Window;
 import javafx.scene.control.Button;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import config.Routes;
 import models.User;
-import helpers.ApplicationContext;
+
+import static config.Messages.*;
 
 class ApplicationController {
-    void setCurrentUser(User user) {
-        ApplicationContext.getInstance().setCurrentUser(user);
-    }
-
-    User getCurrentUser() {
-        return ApplicationContext.getInstance().getCurrentUser();
-    }
+    CustomClientSocket clientSocket;
 
     boolean loggedAsAdmin() {
-        return getCurrentUser().getRole().equals(User.ADMIN_ROLE);
+//      TODO: use getcurrentuser
+        return true;
+//        return getCurrentUser().getRole().equals(User.ADMIN_ROLE);
     }
 
     private void switchWindow(Window currentWindow, String newWindowLocation) {

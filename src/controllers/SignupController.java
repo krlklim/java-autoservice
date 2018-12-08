@@ -1,5 +1,7 @@
 package controllers;
 
+import client.CustomClientMessage;
+import client.CustomClientSocket;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -7,7 +9,10 @@ import javafx.scene.control.TextField;
 
 import models.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static config.Messages.*;
 
 public class SignupController extends ApplicationController {
     @FXML
@@ -33,6 +38,9 @@ public class SignupController extends ApplicationController {
 
     @FXML
     void initialize() {
+        clientSocket = new CustomClientSocket();
+        Thread th = new Thread(clientSocket);
+        th.start();
         setupEvents();
     }
 
@@ -74,7 +82,32 @@ public class SignupController extends ApplicationController {
             signupPassword.getText(),
             User.CUSTOMER_ROLE
         );
-        user.signup();
+
+        sendRequest(user, USER_SIGNUP);
+    }
+
+    User sendRequest(User user, String messageCode) {
+        CustomClientMessage clientMessage = new CustomClientMessage(messageCode, user);
+
+        try {
+            System.out.println(MESSAGE_SENT + messageCode);
+            System.out.println(clientSocket);
+            clientSocket.getObjectOutputStream().writeObject(clientMessage);
+
+            CustomClientMessage serverMessage = (CustomClientMessage)clientSocket.getObjectInputStream().readObject();
+            System.out.println(MESSAGE_RECEIVED + serverMessage.getMessage());
+
+            User response = (User)serverMessage.getPayload();
+
+            if (serverMessage.getMessage().equals("Failure")) {
+                return null;
+            }
+
+            return response;
+        } catch (ClassNotFoundException | IOException exception) {
+            exception.printStackTrace();
+            return null;
+        }
     }
 }
 

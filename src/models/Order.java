@@ -1,7 +1,5 @@
 package models;
 
-import helpers.ApplicationContext;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -126,13 +124,15 @@ public class Order extends ApplicationModel {
     }
 
     public static List<Order> selectVisible() {
-        User currentUser = ApplicationContext.getInstance().getCurrentUser();
-
-        if (currentUser.isAdmin()) {
-            return selectAll();
-        } else {
-            return selectBy(USER_ID, Integer.toString(currentUser.getId()));
-        }
+//      TODO: resctrict for customers
+        return selectAll();
+//        User currentUser = ApplicationContext.getInstance().getCurrentUser();
+//
+//        if (currentUser.isAdmin()) {
+//            return selectAll();
+//        } else {
+//            return selectBy(USER_ID, Integer.toString(currentUser.getId()));
+//        }
     }
 
     public static List<Order> selectBy(String column, String value) {

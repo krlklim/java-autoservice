@@ -1,12 +1,13 @@
 package models;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class User extends ApplicationModel {
+public class User extends ApplicationModel implements Serializable {
     private static final String TABLE = "users";
     public static final String ID = "id";
     private static final String FIRST_NAME = "first_name";
