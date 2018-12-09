@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
@@ -89,15 +90,17 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="usersTable" layoutX="110.0" layoutY="52.0" prefHeight="482.0" prefWidth="433.0">
+                        <TableView fx:id="usersTable" layoutX="110.0" layoutY="52.0" prefHeight="482.0" prefWidth="551.0">
                           <columns>
                               <TableColumn fx:id="userLoginColumn" prefWidth="84.96257019042969" text="ЛОГИН" />
                             <TableColumn fx:id="userFirstNameColumn" prefWidth="123.03746032714844" text="ИМЯ" />
                             <TableColumn fx:id="userLastNameColumn" prefWidth="108.79681396484375" text="ФАМИЛИЯ" />
                               <TableColumn fx:id="userMiddleNameColumn" prefWidth="112.20321655273438" text="ОТЧЕСТВО" />
+                              <TableColumn fx:id="userActiveColumn" prefWidth="119.0" text="СТАТУС" />
                           </columns>
                         </TableView>
                         <Button fx:id="deleteUserButton" layoutX="468.0" layoutY="565.0" mnemonicParsing="false" text="Удалить" />
+                        <Button fx:id="activateUserButton" disable="true" layoutX="327.0" layoutY="565.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="123.0" text="Заблокировать" />
                      </children>
                   </AnchorPane>
               </content>
@@ -126,5 +129,10 @@
             <Button fx:id="logoutButton" layoutX="854.0" layoutY="5.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0" text="Выйти из аккаунта" />
          </children>
       </Pane>
+      <Label fx:id="bannedUserLabel" layoutX="351.0" layoutY="350.0" text="ВХОД ЗАБЛОКИРОВАН" visible="false">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

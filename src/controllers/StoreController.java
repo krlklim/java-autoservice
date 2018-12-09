@@ -61,6 +61,9 @@ public class StoreController extends ApplicationController {
     @FXML
     private Tab usersTab;
 
+    @FXML
+    private Label bannedUserLabel;
+
 //  Automobiles table
     @FXML
     private TableView<AutomobileTableItem> automobilesTable;
@@ -199,9 +202,15 @@ public class StoreController extends ApplicationController {
     @FXML
     private TableColumn<UserTableItem, String> userMiddleNameColumn;
 
+    @FXML
+    private TableColumn<UserTableItem, String> userActiveColumn;
+
 //  Users controls
     @FXML
     private Button deleteUserButton;
+
+    @FXML
+    private Button activateUserButton;
 
 //  Cars chart
     @FXML
@@ -219,6 +228,13 @@ public class StoreController extends ApplicationController {
     @FXML
     void initialize() {
         setupHeader();
+
+        if(!(getCurrentUser().isActive())) {
+            storeTabPane.setVisible(false);
+            bannedUserLabel.setVisible(true);
+            return;
+        }
+
         setupCellValueFactories();
         setupEvents();
         resetAutomobiles();
@@ -250,6 +266,7 @@ public class StoreController extends ApplicationController {
         userFirstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
         userLastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
         userMiddleNameColumn.setCellValueFactory(cellData -> cellData.getValue().middleNameProperty());
+        userActiveColumn.setCellValueFactory(cellData -> cellData.getValue().activeProperty());
     }
 
     private void resetAutomobiles() {
@@ -301,9 +318,9 @@ public class StoreController extends ApplicationController {
         cancelOrderSaveButton.setOnAction(event -> closeOrdersForm());
         confirmOrderButton.setOnAction(event -> confirmOrder());
         deleteUserButton.setOnAction(event -> deleteUser());
-        logoutButton.setOnAction(event -> logoutUser());
         exportCheckoutButton.setOnAction(event -> exportCheckout());
         exportAutomobilesButton.setOnAction(event -> exportAutomobiles());
+        activateUserButton.setOnAction(event -> activateUser());
 
         automobilesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
@@ -314,7 +331,7 @@ public class StoreController extends ApplicationController {
         );
 
         usersTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> triggerUserDeleteButton(!(newValue == null))
+                (observable, oldValue, newValue) -> triggerUserControlButtons(!(newValue == null))
         );
 
     }
@@ -353,7 +370,7 @@ public class StoreController extends ApplicationController {
         return buttons;
     }
 
-    private void setupUserControls() {
+    private void  setupUserControls() {
         if (loggedAsAdmin()) {
             adminControlPane.setVisible(true);
             orderButton.setVisible(false);
@@ -371,6 +388,8 @@ public class StoreController extends ApplicationController {
     }
 
     private void setupHeader() {
+        logoutButton.setOnAction(event -> logoutUser());
+        
         User user = getCurrentUser();
         roleLabel.setText(
             Translations.roles.get(user.getRole()) + " " + user.getFirstName() + " " + user.getLastName()
@@ -434,6 +453,11 @@ public class StoreController extends ApplicationController {
         resetOrders();
     }
 
+    private void activateUser() {
+        getSelectedUser().triggerActive();
+        resetUsers();
+    }
+
     private void triggerAutomobileControlButtons(boolean enabled) {
         for(Button button: automobileControlButtons()) {
             button.setDisable(!enabled);
@@ -449,11 +473,18 @@ public class StoreController extends ApplicationController {
         exportCheckoutButton.setDisable(!enabled);
     }
 
-    private void triggerUserDeleteButton(Boolean enabled) {
-        if (getSelectedUser().getId() == ApplicationContext.getInstance().getCurrentUser().getId()) {
-            deleteUserButton.setDisable(true);
-            return;
+    private void triggerUserControlButtons(Boolean enabled) {
+        if (enabled) {
+            activateUserButton.setText(getSelectedUser().getActive() == UserTableItem.ACTIVE ? "Заблокировать" : "Активировать");
+
+            if (getSelectedUser().getId() == ApplicationContext.getInstance().getCurrentUser().getId()) {
+                activateUserButton.setDisable(true);
+                deleteUserButton.setDisable(true);
+                return;
+            }
         }
+
+        activateUserButton.setDisable(!enabled);
         deleteUserButton.setDisable(!enabled);
     }
 

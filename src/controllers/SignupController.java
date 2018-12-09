@@ -72,7 +72,8 @@ public class SignupController extends ApplicationController {
             signupMiddleName.getText(),
             signupLogin.getText(),
             signupPassword.getText(),
-            User.CUSTOMER_ROLE
+            User.CUSTOMER_ROLE,
+            true
         );
         user.signup();
     }

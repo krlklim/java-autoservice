@@ -4,7 +4,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import models.Order;
 import models.User;
+
+import config.Translations;
 
 public class UserTableItem {
     private IntegerProperty id;
@@ -12,6 +15,10 @@ public class UserTableItem {
     private StringProperty lastName;
     private StringProperty middleName;
     private StringProperty login;
+    private StringProperty active;
+
+    public static String ACTIVE = "АКТИВЕН";
+    public static String INACTIVE = "ЗАБЛОКИРОВАН";
 
     public UserTableItem(User user) {
         this.id = new SimpleIntegerProperty(user.getId());
@@ -19,6 +26,7 @@ public class UserTableItem {
         this.lastName = new SimpleStringProperty(user.getLastName());
         this.middleName = new SimpleStringProperty(user.getMiddleName());
         this.login = new SimpleStringProperty(user.getLogin());
+        this.active = new SimpleStringProperty(user.isActive() ? ACTIVE : INACTIVE);
     }
 
     public int getId() {
@@ -79,5 +87,23 @@ public class UserTableItem {
 
     public void setLogin(String login) {
         this.login.set(login);
+    }
+
+    public String getActive() {
+        return active.get();
+    }
+
+    public StringProperty activeProperty() {
+        return this.active;
+    }
+
+    public void setActive(String active) {
+        this.active.set(active);
+    }
+
+    public void triggerActive() {
+        User user = new User();
+        user.setId(id.get());
+        user.triggerActive(active.get() == ACTIVE);
     }
 }

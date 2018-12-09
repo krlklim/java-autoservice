@@ -15,6 +15,7 @@ public class User extends ApplicationModel {
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
     private static final String ROLE = "role";
+    private static final String ACTIVE = "active";
 
     public static final String ADMIN_ROLE = "admin";
     public static final String CUSTOMER_ROLE = "customer";
@@ -26,11 +27,12 @@ public class User extends ApplicationModel {
     private String login;
     private String password;
     private String role;
+    private boolean active;
 
     public User() {
         super();
     }
-    public User(String firstName, String lastName, String middleName, String login, String password, String role) {
+    public User(String firstName, String lastName, String middleName, String login, String password, String role, boolean active) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,6 +40,7 @@ public class User extends ApplicationModel {
         this.login = login;
         this.password = password;
         this.role = role;
+        this.active = active;
     }
 
     public boolean isAdmin() {
@@ -100,11 +103,19 @@ public class User extends ApplicationModel {
         this.role = role;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public void signup() {
         List<String> columns = Arrays.asList(
-            FIRST_NAME, LAST_NAME, MIDDLE_NAME, LOGIN, PASSWORD, ROLE
+            FIRST_NAME, LAST_NAME, MIDDLE_NAME, LOGIN, PASSWORD, ROLE, ACTIVE
         );
-        List values = Arrays.asList(firstName, lastName, middleName, login, password, role);
+        List values = Arrays.asList(firstName, lastName, middleName, login, password, role, active);
         insertQuery(TABLE, columns, values);
     }
 
@@ -168,10 +179,18 @@ public class User extends ApplicationModel {
             user.setMiddleName(result.getString(MIDDLE_NAME));
             user.setLogin(result.getString(LOGIN));
             user.setRole(result.getString(ROLE));
+            user.setActive(result.getBoolean(ACTIVE));
             return user;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void triggerActive(boolean active) {
+        List<String> columns = Arrays.asList(ACTIVE);
+        List values = Arrays.asList(active ? 0 : 1);
+        updateQuery(TABLE, id, columns, values);
+        this.active = active;
     }
 }
