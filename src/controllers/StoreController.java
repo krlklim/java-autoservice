@@ -1,5 +1,6 @@
 package controllers;
 
+import config.Translations;
 import helpers.ApplicationContext;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -20,6 +21,7 @@ import tableModels.UserTableItem;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,14 @@ public class StoreController extends ApplicationController {
 
     private String formAction;
 
-    //  Tabs
+//  Status panel
+    @FXML
+    private Label roleLabel;
+
+    @FXML
+    private Button logoutButton;
+
+//  Tabs
     @FXML
     private TabPane storeTabPane;
 
@@ -194,6 +203,7 @@ public class StoreController extends ApplicationController {
 
     @FXML
     void initialize() {
+        setupHeader();
         setupCellValueFactories();
         setupEvents();
         resetAutomobiles();
@@ -276,6 +286,7 @@ public class StoreController extends ApplicationController {
         cancelOrderSaveButton.setOnAction(event -> closeOrdersForm());
         confirmOrderButton.setOnAction(event -> confirmOrder());
         deleteUserButton.setOnAction(event -> deleteUser());
+        logoutButton.setOnAction(event -> logoutUser());
 
         automobilesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
@@ -289,6 +300,11 @@ public class StoreController extends ApplicationController {
                 (observable, oldValue, newValue) -> triggerUserDeleteButton(!(newValue == null))
         );
 
+    }
+
+    private void logoutUser() {
+        setCurrentUser(null);
+        navigateFromButton(logoutButton, "LOGIN_PATH");
     }
 
     private void loadOrdersForm() {
@@ -333,6 +349,14 @@ public class StoreController extends ApplicationController {
         }
 
         ordersTable.setDisable(false);
+    }
+
+    private void setupHeader() {
+        User user = getCurrentUser();
+        roleLabel.setText(
+            Translations.roles.get(user.getRole()) + " " + user.getFirstName() + " " + user.getLastName()
+        );
+
     }
 
     private List<TextField> automobileFormFields() {
