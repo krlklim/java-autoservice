@@ -39,9 +39,10 @@
                               <Button fx:id="closeAutomobileFormButton" layoutX="123.0" layoutY="316.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="69.0" text="Отмена" />
                            </children>
                         </Pane>
-                        <Pane fx:id="adminControlPane" layoutX="179.0" layoutY="544.0" prefHeight="65.0" prefWidth="330.0">
+                        <Pane fx:id="adminControlPane" layoutX="94.0" layoutY="544.0" prefHeight="65.0" prefWidth="415.0">
                            <children>
-                              <Button fx:id="deleteAutomobileButton" layoutX="247.0" layoutY="19.0" mnemonicParsing="false" text="Удалить" />
+                              <Button fx:id="exportAutomobilesButton" layoutX="348.0" layoutY="19.0" mnemonicParsing="false" text="Экспорт" />
+                              <Button fx:id="deleteAutomobileButton" layoutX="246.0" layoutY="19.0" mnemonicParsing="false" text="Удалить" />
                               <Button fx:id="newAutomobileButton" layoutY="19.0" mnemonicParsing="false" text="Добавить" />
                               <Button fx:id="editAutomobileButton" layoutX="110.0" layoutY="19.0" mnemonicParsing="false" text="Редактировать" />
                            </children>

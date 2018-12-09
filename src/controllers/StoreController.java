@@ -21,6 +21,7 @@ import tableModels.UserTableItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +92,9 @@ public class StoreController extends ApplicationController {
 
     @FXML
     private Button deleteAutomobileButton;
+
+    @FXML
+    private Button exportAutomobilesButton;
 
 //  Automobiles customer controls
     @FXML
@@ -299,6 +303,7 @@ public class StoreController extends ApplicationController {
         deleteUserButton.setOnAction(event -> deleteUser());
         logoutButton.setOnAction(event -> logoutUser());
         exportCheckoutButton.setOnAction(event -> exportCheckout());
+        exportAutomobilesButton.setOnAction(event -> exportAutomobiles());
 
         automobilesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
@@ -577,14 +582,44 @@ public class StoreController extends ApplicationController {
         setDataToCarsChart();
     }
 
-    public void exportCheckout() {
+    private void exportCheckout() {
         String filepath = System.getProperty("user.dir") + "/export/checkout.pdf";
         File file = new File(filepath);
         file.getParentFile().mkdirs();
         createCheckoutPdf(filepath);
     }
 
-    public void createCheckoutPdf(String dest) {
+    private void exportAutomobiles() {
+        String filepath = System.getProperty("user.dir") + "/export/automobiles.pdf";
+        File file = new File(filepath);
+        file.getParentFile().mkdirs();
+        createAutomobilesPdf(filepath);
+    }
+
+    private void createAutomobilesPdf(String dest) {
+        List<Automobile> automobiles = Automobile.selectAll();
+        try {
+            PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
+            Document document = new Document(pdf);
+            document.add(new Paragraph("Otchet ob avtomobilyah"));
+
+            for(Automobile automobile : automobiles) {
+                document.add(new Paragraph("#################################"));
+                document.add(new Paragraph("Marka: " + automobile.getBrand()));
+                document.add(new Paragraph("Model: " + automobile.getName()));
+                document.add(new Paragraph("Seryiniy nomber: " + automobile.getSerialNumber()));
+                document.add(new Paragraph("God proizvodstva: " + automobile.getProductionYear()));
+                document.add(new Paragraph("Stoimost: " + automobile.getCost()));
+                document.add(new Paragraph("#################################"));
+            }
+
+            document.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createCheckoutPdf(String dest) {
         OrderTableItem order = getSelectedOrder();
         try {
             PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
