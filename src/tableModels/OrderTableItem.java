@@ -38,11 +38,15 @@ public class OrderTableItem {
     }
 
     private String automobileName(Automobile automobile) {
-        return automobile.getBrand() + automobile.getName() + automobile.getSerialNumber();
+        return String.join(" ",
+            automobile.getBrand(),
+            automobile.getName(),
+            automobile.getSerialNumber()
+        );
     }
 
     private String userName(User user) {
-        return user.getLastName() + " " + user.getFirstName();
+        return String.join(" ", user.getLastName(), user.getFirstName());
     }
 
     public String getCost() {

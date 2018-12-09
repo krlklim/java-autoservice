@@ -1,5 +1,6 @@
 package controllers;
 
+import com.itextpdf.layout.Document;
 import config.Translations;
 import helpers.ApplicationContext;
 import javafx.collections.FXCollections;
@@ -18,12 +19,18 @@ import tableModels.AutomobileTableItem;
 import tableModels.OrderTableItem;
 import tableModels.UserTableItem;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 public class StoreController extends ApplicationController {
     private static final String CREATE_BUTTON_TEXT = "Создать";
@@ -158,7 +165,11 @@ public class StoreController extends ApplicationController {
     private TextField addressField;
 
 //  Orders admin controls
-    @FXML Button confirmOrderButton;
+    @FXML
+    private Button confirmOrderButton;
+
+    @FXML
+    private Button exportCheckoutButton;
 
 //  Orders form controls
 
@@ -287,6 +298,7 @@ public class StoreController extends ApplicationController {
         confirmOrderButton.setOnAction(event -> confirmOrder());
         deleteUserButton.setOnAction(event -> deleteUser());
         logoutButton.setOnAction(event -> logoutUser());
+        exportCheckoutButton.setOnAction(event -> exportCheckout());
 
         automobilesTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> triggerAutomobileControlButtons(!(newValue == null))
@@ -341,11 +353,13 @@ public class StoreController extends ApplicationController {
             adminControlPane.setVisible(true);
             orderButton.setVisible(false);
             confirmOrderButton.setVisible(true);
+            exportCheckoutButton.setVisible(true);
         } else {
             adminControlPane.setVisible(false);
             orderButton.setVisible(true);
             confirmOrderButton.setVisible(false);
             storeTabPane.getTabs().remove(usersTab);
+            exportCheckoutButton.setVisible(false);
         }
 
         ordersTable.setDisable(false);
@@ -427,6 +441,7 @@ public class StoreController extends ApplicationController {
             return;
         }
         confirmOrderButton.setDisable(!enabled);
+        exportCheckoutButton.setDisable(!enabled);
     }
 
     private void triggerUserDeleteButton(Boolean enabled) {
@@ -560,5 +575,32 @@ public class StoreController extends ApplicationController {
     private void clearChart() {
         carsChart.getData().clear();
         setDataToCarsChart();
+    }
+
+    public void exportCheckout() {
+        String filepath = System.getProperty("user.dir") + "/export/checkout.pdf";
+        File file = new File(filepath);
+        file.getParentFile().mkdirs();
+        createCheckoutPdf(filepath);
+    }
+
+    public void createCheckoutPdf(String dest) {
+        OrderTableItem order = getSelectedOrder();
+        try {
+            PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
+            Document document = new Document(pdf);
+            document.add(new Paragraph("Check"));
+            document.add(new Paragraph("#################################"));
+            document.add(new Paragraph("Avtomobil: " + order.getAutomobile()));
+            document.add(new Paragraph("Stoimost: " + order.getCost() + "BYN"));
+            document.add(new Paragraph("#################################"));
+            document.add(new Paragraph("Pokupatel: " + order.getUser()));
+            document.add(new Paragraph("Nomer kreditnoi karty: " + order.getPayment()));
+            document.add(new Paragraph("Adres: " + order.getAddress()));
+            document.add(new Paragraph("Telefon: " + order.getPhone()));
+            document.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

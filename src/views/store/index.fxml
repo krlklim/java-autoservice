@@ -80,6 +80,7 @@
                            </columns>
                         </TableView>
                         <Button fx:id="confirmOrderButton" disable="true" layoutX="571.0" layoutY="509.0" mnemonicParsing="false" text="Подтвердить заказ" />
+                        <Button fx:id="exportCheckoutButton" disable="true" layoutX="399.0" layoutY="509.0" mnemonicParsing="false" text="Экспортировать чек" />
                      </children></AnchorPane>
             </content>
           </Tab>
